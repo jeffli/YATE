@@ -2,4 +2,5 @@
 YATE: a HTML template engine
 version: 1.0
 date: March 2010
- 
+license:  New BSD License
+Copyright (c) 2010, Mu Dynamics Lab

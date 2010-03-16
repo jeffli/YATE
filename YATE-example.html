@@ -1,0 +1,202 @@
+<html>
+<head>
+<title> YATE example </title>
+		<style type="text/css">
+table{
+	width: 100%;
+    font-size: 12pt;  
+	font-color: #333;
+}
+	
+td{
+	border-bottom: 1px  solid #eee;
+	text-align:center;
+	vertical-align: middle;
+	padding: 0px 10px;
+}
+
+tr.header-row td{
+	height: 20px;
+	border-top: 1px solid #eee;
+	font-size: 90%;
+	color: #414D57;
+}
+
+tr.content-row{
+	height: 30px;
+} 
+			
+		</style>
+
+<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.3.2.min.js"></script>
+<script language="javascript" src="http://github.com/jeffli/YATE/raw/master/jquery.yate-1.0.js" ></script>
+</head>
+
+<body>
+
+<div style="float:left; width:500px;">
+<div class="templateonly0"   style=" padding-left:10px; min-height:230px;">
+			<div style="color: #E56A1F; font-weight: bold; padding-bottom:  2px;">Test Queue (template only)</div>
+			<table style="border: 1px solid #eee;">
+				<thead>
+				  <tr class="header-row">
+					<td style="text-align: left;">Test Name</td>
+					<td style="width: 50px;">Queue #</td>
+					<td style="width: 50px;">Status</td>
+					<td style="">Date Queued</td>
+			 	  </tr>
+			 	</thead>
+			 	<tbody   >  
+<tr class="content-row" >
+ <td style="text-align:left;"><a href="{y:t link}  #  {/y:t}">
+    <y:t title>
+       SIP Inject-Overflow Mutations
+    </y:t>
+   </a>
+</td>
+<td ><y:t status.queuenum>-</y:t></td>
+<td >
+  <y:t status.progress>
+    <div style="height: 8px; margin:3px 0px;">
+	<div style='border: 1px solid #ccc; ' ><div style="background-color: #99D97F; height: 100%;  width:30%;" ></div></div>
+	</div>
+  </y:t>
+  <y:t remove>
+    <div style="height: 8px; margin:3px 0px;">
+	<div style='border: 1px solid #ccc; '><div style="background-color: #99D97F; height: 100%;   width:80%;" ></div></div>
+	</div>
+  </y:t>						  						   
+</td>
+<td class=" tpl_date "><y:t date  >03/02/2010</y:t></td>
+</tr>
+			  </tbody>
+			</table>
+</div>
+
+
+<br/><br/> 
+<textarea id="template" rows="30" cols="55">
+<tr class="content-row" >
+ <td style="text-align:left;"><a href="{y:t link}  #  {/y:t}">
+    <y:t title>
+       SIP Inject-Overflow Mutations
+    </y:t>
+   </a>
+</td>
+<td ><y:t status.queuenum>-</y:t></td>
+<td >
+  <y:t status.progress>
+    <div style="height: 8px; margin:3px 0px;">
+	<div style='border: 1px solid #ccc; '><div style="background-color: #99D97F; height: 100%;  width:30%;" ></div></div>
+	</div>
+  </y:t>
+  <y:t remove>
+    <div style="height: 8px; margin:3px 0px;">
+	<div style='border: 1px solid #ccc; '><div style="background-color: #99D97F; height: 100%;   width:80%;" ></div></div>
+	</div>
+  </y:t>						  						   
+</td>
+<td ><y:t date  >03/02/2010</y:t></td>
+</tr>
+
+</textarea>
+<br/>
+
+
+<input type="button" value="use this as template" onclick="usetemplate();"  />
+</div>
+
+<div style="float:left; width:500px; padding-left:10px;  ">
+<div id="useyate"   style="  min-height:230px;">
+			<div style="color: #E56A1F; font-weight: bold; padding-bottom:  2px;">Test Queue (with real data)</div>
+			<table style="border: 1px solid #eee;" >
+				<thead>
+				  <tr class="header-row">
+					<td style="text-align: left;">Test Name</td>
+					<td style="width: 50px;">Queue #</td>
+					<td style="width: 50px;">Status</td>
+					<td style="">Date Queued</td>
+			 	  </tr>
+			 	</thead>
+			 	<tbody   >  
+ 
+			  </tbody>
+			</table>
+	<br/>
+	<div id="rendertime"></div>
+</div>
+ 
+<br/><br/> 	
+
+<textarea id="data" rows="30" cols="55">
+var data = [{'title':'SIP Scenario', 'link': "#sip",   'status':{queuenum:'-', progress:['0.9'] }, 'date':'2/26/10'}, 
+{'title':'TCP Test Run', 'link': "#tcp",'status':{queuenum:'-', progress:[1, '0.8', 0.2] }, 'date':'3/1/10'}, 
+{'title':'UDP Test Run', 'link': "#udp",'status':{queuenum:'1', progress:'Queued'}, 'date':'3/2/10'},
+{'title':'HTTP Mutation Run', 'link': "#http",'status':{queuenum:'2', progress:'Queued'}, 'date':'3/3/10'}];			      
+	
+	
+var logic = {
+   "status.progress" : function (para) {
+		var d = para.data[para.index];
+	 	var node = para.node;
+	 	if (typeof d.status.progress === 'string') {
+	 		return d.status.progress;
+	 	}
+	 	var r = "";
+	 	$n = $(node);
+	 	for(var i in d.status.progress){
+	 	var item = d.status.progress[i];
+	 	 
+	 	r += $n.children().attr('title', (item * 100) + "%")
+		 	 .children().css('width', (item * 100) + "%").parent().parent().parent().html();
+	 	}
+	 	return r;
+	 },
+	 date: function(para){
+	  	var d = para.data[para.index];
+	 	return d['date']+" at "+(new Date()).getSeconds()+"s";
+	 }
+};		
+</textarea>
+<input type="button" value='render data by "YATE"' onclick="useyate();" />
+</div>
+
+</div>
+
+
+<script language="javascript" >
+var counter=0;
+var id = '.templateonly'+counter;
+
+function usetemplate(){
+	
+	var txt = $('#template').val();
+ 
+ 	counter++;
+ 	$(id).removeClass('templateonly'+(counter-1)).addClass('templateonly'+counter);
+ 	id = '.templateonly'+counter;
+ 	
+	$(id+' table tbody').html('');
+	$(txt).appendTo(id+' table tbody');
+	useyate();
+	
+	 
+}
+
+function useyate(){
+	eval( $('#data').val() );
+	
+	$('#useyate table tbody').empty();
+	var start = new Date();
+	var html = $.yate({template_selector: id+' table tbody', 'data': data, 'options': logic, returnHtml: true});
+
+	$('#useyate table tbody').html(html);
+	
+	$('#rendertime').html("render time: "+(new Date()-start)+" ms");
+}
+</script>
+
+
+</body>
+
+</html>
