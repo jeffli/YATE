@@ -34,23 +34,26 @@ tr.content-row{
 
 <body>
 
-<div style="float:left; width:500px;">
-<div class="templateonly0"   style=" padding-left:10px; min-height:230px;">
-			<div style="color: #E56A1F; font-weight: bold; padding-bottom:  2px;">Test Queue (template only)</div>
+
+
+<div  >
+
+<div class="templateonly0"   style="  float:right;  width:390px;  ">
+<div style="color: #E56A1F; font-weight: bold; padding-bottom:  2px;">My Lego projects (template only)</div> 
 			<table style="border: 1px solid #eee;">
 				<thead>
 				  <tr class="header-row">
-					<td style="text-align: left;">Test Name</td>
+					<td style="text-align: left;">Name</td>
 					<td style="width: 50px;">Queue #</td>
 					<td style="width: 50px;">Status</td>
-					<td style="">Date Queued</td>
+					<td style="">Date</td>
 			 	  </tr>
 			 	</thead>
 			 	<tbody   >  
 <tr class="content-row" >
  <td style="text-align:left;"><a href="{y:t link}  #  {/y:t}">
     <y:t title>
-       SIP Inject-Overflow Mutations
+       Atlantis
     </y:t>
    </a>
 </td>
@@ -67,19 +70,23 @@ tr.content-row{
 	</div>
   </y:t>						  						   
 </td>
-<td class=" tpl_date "><y:t date  >03/02/2010</y:t></td>
+<td class=" tpl_date "><y:t date  >03/10/2010</y:t></td>
 </tr>
 			  </tbody>
 			</table>
 </div>
 
 
-<br/><br/> 
-<textarea id="template" rows="30" cols="55">
+
+<div style="margin-right: 400px;"> 
+
+<input type="button" value='update &rarr;' style=" float:right;    " onclick="usetemplate();" />
+
+<textarea id="template" rows="30" style="width:100%; " >
 <tr class="content-row" >
  <td style="text-align:left;"><a href="{y:t link}  #  {/y:t}">
     <y:t title>
-       SIP Inject-Overflow Mutations
+       Atlantis
     </y:t>
    </a>
 </td>
@@ -96,26 +103,29 @@ tr.content-row{
 	</div>
   </y:t>						  						   
 </td>
-<td ><y:t date  >03/02/2010</y:t></td>
+<td ><y:t date  >03/10/2010</y:t></td>
 </tr>
 
 </textarea>
-<br/>
+</div> 
+ 
 
-
-<input type="button" value="use this as template" onclick="usetemplate();"  />
 </div>
 
-<div style="float:left; width:500px; padding-left:10px;  ">
-<div id="useyate"   style="  min-height:230px;">
-			<div style="color: #E56A1F; font-weight: bold; padding-bottom:  2px;">Test Queue (with real data)</div>
+
+<br/><br/>
+
+
+<div > 
+<div id="useyate"   style=" float:right;  width:390px; ">
+			<div style="color: #E56A1F; font-weight: bold; padding-bottom:  2px;">My Lego projects (with real data)</div>
 			<table style="border: 1px solid #eee;" >
 				<thead>
 				  <tr class="header-row">
-					<td style="text-align: left;">Test Name</td>
+					<td style="text-align: left;">Name</td>
 					<td style="width: 50px;">Queue #</td>
 					<td style="width: 50px;">Status</td>
-					<td style="">Date Queued</td>
+					<td style="">Date</td>
 			 	  </tr>
 			 	</thead>
 			 	<tbody   >  
@@ -126,13 +136,27 @@ tr.content-row{
 	<div id="rendertime"></div>
 </div>
  
-<br/><br/> 	
-
-<textarea id="data" rows="30" cols="55">
-var data = [{'title':'SIP Scenario', 'link': "#sip",   'status':{queuenum:'-', progress:['0.9'] }, 'date':'2/26/10'}, 
-{'title':'TCP Test Run', 'link': "#tcp",'status':{queuenum:'-', progress:[1, '0.8', 0.2] }, 'date':'3/1/10'}, 
-{'title':'UDP Test Run', 'link': "#udp",'status':{queuenum:'1', progress:'Queued'}, 'date':'3/2/10'},
-{'title':'HTTP Mutation Run', 'link': "#http",'status':{queuenum:'2', progress:'Queued'}, 'date':'3/3/10'}];			      
+<div style="margin-right: 400px;"> 
+<input type="button" value='render data by "YATE" &rarr;' style=" float:right;    " onclick="useyate();" />
+<textarea id="data" rows="30" style="width:100%; ">
+var data = [
+    {'title':'Transformer', 
+     'link': "#transformer",    
+     'status':{queuenum:'-', progress:['0.9'] }, 
+     'date':'3/3/10'}, 
+    {'title':'Pirates', 
+     'link': "#pirates",
+     'status':{queuenum:'-', progress:[1, '0.8', 0.2] }, 
+     'date':'3/6/10'}, 
+    {'title':'Castle', 
+     'link': "#castle",
+     'status':{queuenum:'1', progress:'Queued'}, 
+     'date':'3/28/10'},
+    {'title':'Race Car', 
+     'link': "#racecar",
+     'status':{queuenum:'2', progress:'Queued'}, 
+     'date':'3/30/10'}
+];			      
 	
 	
 var logic = {
@@ -152,13 +176,13 @@ var logic = {
 	 	}
 	 	return r;
 	 },
-	 date: function(para){
+   date: function(para){
 	  	var d = para.data[para.index];
 	 	return d['date']+" at "+(new Date()).getSeconds()+"s";
 	 }
 };		
 </textarea>
-<input type="button" value='render data by "YATE"' onclick="useyate();" />
+
 </div>
 
 </div>
