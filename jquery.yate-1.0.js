@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
  
+
 (function($) {
   var _cache = {};
   
@@ -40,6 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	var data = obj.data;
 	var options = obj.options;
 	var returnHtml = obj.returnHtml;
+	var debug = obj.debug;
 	
   	var $node = $(selectorId) ;
   	// selector finds nothing, return
@@ -63,8 +65,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       
       var tpl = unescape($node.html()).replace(/[\r\t\n]/g, " ")
       			.replace(/<y:t\s*remove(.*?)>(.*?)<\/y:t>/g, " ")
-      			.replace(/<table(.*?)y:t_remove(.*?)>(.*?)<\/table\s*>/g, " ")
-      			.replace(/<thead(.*?)y:t_remove(.*?)>(.*?)<\/thead\s*>/g, " ")
+      			.replace(/<table(.*?)y:t_remove(.*?)>(.*?)<\/tbody\s*>/g, " ")
+      			.replace(/<thead(.*?)y:t_remove(.*?)>(.*?)<\/tbody\s*>/g, " ")
       			.replace(/<tbody(.*?)y:t_remove(.*?)>(.*?)<\/tbody\s*>/g, " ")
       			.replace(/<tr(.*?)y:t_remove(.*?)>(.*?)<\/tr\s*>/g, " ")
       			.replace(/<td(.*?)y:t_remove(.*?)>(.*?)<\/td\s*>/g, " ")  ;
@@ -92,7 +94,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
     
     // print out template binding function in firebug
-    //console.info(fn.toSource());
+    if(debug) console.info(fn.toSource());
     var html = fn(data, options);
     if(returnHtml)  return html;
     
