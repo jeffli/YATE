@@ -2,6 +2,7 @@
 YATE:  yet another template engine 
 authors:  Jeff  Li,  Raghuram Kanadams
 license:  New BSD License ( 3-clause license )
+version:  1.01
  
 Copyright (c) 2010, Mu Dynamics Lab
 All rights reserved.
@@ -41,6 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	var options = obj.options;
 	var returnHtml = obj.returnHtml;
 	var debug = obj.debug;
+	//console.info(debug);
 	
   	var $node = $(selectorId) ;
   	// selector finds nothing, return
@@ -70,31 +72,49 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       			.replace(/<tr([^>]*?)y:t_remove(.*?)>(.*?)<\/tr\s*>/g, " ")
       			.replace(/<td([^>]*?)y:t_remove(.*?)>(.*?)<\/td\s*>/g, " ")  ;
       
-      var re = new RegExp ('[<|{]y:t\s*(.*?)(="")?[>|}](.*?)[<|{]\/y:t[>|}]');
+      var rewindPoint = [];
+      var re = new RegExp ('[<|{]y:t\s*(.*?)(="")?[>|}](.*?)([<|{]\/y:t[>|}]|[<|{]y:t)', "g");
       var matches = re.exec (tpl);
       while (matches && matches.length > 1) {
-      	var property = $.trim (matches[1]);
-      	var replacement;
       	
-      	if (typeof (options[property]) === 'function') {
-       		replacement = "'); p.push( (options['" + property + "'])({'data': data,'index':i,'node': '"+matches[3]+"'}));"
-      	}else {
-       		replacement = "'); p.push(d." + property + " === undefined? "
-       					+" function(){ throw ' template/data mismatch! can NOT find \"" + property + "\" in the data.' }() : d."+property+" );"
+      	if(matches[4].indexOf("/y:t") > -1){
+	      	var property = $.trim (matches[1]);
+	      	var replacement;
+ 
+	      	if (typeof (options[property]) === 'function') {
+	       		replacement = "'); p.push( (options['" + property + "'])({'data': data,'index':i,'node': '"
+	       					+matches[3].replace(/\); p\.push\(/g,'+')  // need to get rid of p.push in case it's a nested tag
+	       					+" '}));"
+	      	}else {
+	       		replacement = "'); p.push( (d['" + property + "'] === undefined && debug ? "
+	       					+" function(){ throw ' template/data mismatch! can NOT find \"" + property + "\" in the data.' }() : d['"+property+"']) );"
+	      	}
+	      	tpl = tpl.replace (matches[0], replacement + " p.push('" );
+ 
+	      	if(rewindPoint.length > 0){
+	      		re.lastIndex = rewindPoint.pop();
+	      	}
+ 
+	      	matches = re.exec (tpl);
       	}
-      	tpl = tpl.replace (re, replacement + " p.push('" );
-      	matches = re.exec (tpl);
+      	// there is a nest tag
+      	else{
+      		re.lastIndex -=  4;
+      		rewindPoint.push(matches.index);
+      		matches = re.exec (tpl);
+      	}
+      	
       } 
          
       fnBody += (tpl + "'); };   return p.join(''); ");
       
       // create the function that does the template data binding
-      _cache[selectorId] = fn = new Function(["data", "options"], fnBody);
+      _cache[selectorId] = fn = new Function(["data", "options", "debug"], fnBody);
     }
     
     // print out template binding function in firebug
-    if(debug) console.info(fn.toSource());
-    var html = fn(data, options);
+    if(debug) console.info($.browser.mozilla? fn.toSource() : fn);
+    var html = fn(data, options, debug);
     if(returnHtml)  return html;
     
 	$node.html(html).show();
