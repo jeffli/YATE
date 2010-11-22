@@ -2,7 +2,7 @@
 YATE:  yet another template engine 
 authors:  Jeff  Li,  Raghuram Kanadams
 license:  New BSD License ( 3-clause license )
-version:  1.01
+version:  1.02
  
 Copyright (c) 2010, Mu Dynamics Lab
 All rights reserved.
@@ -64,21 +64,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       	+"var d=data[i]; "
       	+"p.push('";
       
-      var tpl = unescape($node.html()).replace(/[\r\t\n]/g, " ")
-      			.replace(/<y:t\s*remove(.*?)>(.*?)<\/y:t>/g, " ")
-      			.replace(/<table([^>]*?)y:t_remove(.*?)>(.*?)<\/tbody\s*>/g, " ")
-      			.replace(/<thead([^>]*?)y:t_remove(.*?)>(.*?)<\/tbody\s*>/g, " ")
-      			.replace(/<tbody([^>]*?)y:t_remove(.*?)>(.*?)<\/tbody\s*>/g, " ")
-      			.replace(/<tr([^>]*?)y:t_remove(.*?)>(.*?)<\/tr\s*>/g, " ")
-      			.replace(/<td([^>]*?)y:t_remove(.*?)>(.*?)<\/td\s*>/g, " ")  ;
+      var tpl = unescape($node.html()).replace(/[\r\t\n]/gi, " ")
+      			.replace(/<y:t\s*remove(.*?)>(.*?)<\/y:t>/gi, " ")
+      			.replace(/<table([^>]*?)y:t_remove(.*?)>(.*?)<\/tbody\s*>/gi, " ")
+      			.replace(/<thead([^>]*?)y:t_remove(.*?)>(.*?)<\/tbody\s*>/gi, " ")
+      			.replace(/<tbody([^>]*?)y:t_remove(.*?)>(.*?)<\/tbody\s*>/gi, " ")
+      			.replace(/<tr([^>]*?)y:t_remove(.*?)>(.*?)<\/tr\s*>/gi, " ")
+      			.replace(/<td([^>]*?)y:t_remove(.*?)>(.*?)<\/td\s*>/gi, " ")  ;
       
       var rewindPoint = [];
-      var re = new RegExp ('[<|{]y:t\s*(.*?)(="")?[>|}](.*?)([<|{]\/y:t[>|}]|[<|{]y:t)', "g");
+      var re = new RegExp ('[<|{]y:t\s*(.*?)(="")?[>|}](.*?)([<|{]\/y:t[>|}]|[<|{]y:t)', "gi");
+      var propertyAttributeRegex = /property\s*=\s*[\'\\\"](.*)[\'\\\"]/gi; //This is for identifying <y:t property="myProperty"> Syntax
       var matches = re.exec (tpl);
       while (matches && matches.length > 1) {
       	
-      	if(matches[4].indexOf("/y:t") > -1){
+      	if(matches[4].indexOf("/y:t") > -1 || matches[4].indexOf("/Y:T") > -1){
 	      	var property = $.trim (matches[1]);
+	      	var propertyAttributeMatches = propertyAttributeRegex.exec (property);
+	      	if (propertyAttributeMatches && propertyAttributeMatches.length > 1) {
+	      		property = 	propertyAttributeMatches[1];
+	      	}
+	      	propertyAttributeRegex.lastIndex = 0;
 	      	var replacement;
  
 	      	if (typeof (options[property]) === 'function') {
@@ -94,16 +100,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      	if(rewindPoint.length > 0){
 	      		re.lastIndex = rewindPoint.pop();
 	      	}
- 
-	      	matches = re.exec (tpl);
       	}
       	// there is a nest tag
       	else{
       		re.lastIndex -=  4;
       		rewindPoint.push(matches.index);
-      		matches = re.exec (tpl);
       	}
-      	
+      	matches = re.exec (tpl);
       } 
          
       fnBody += (tpl + "'); };   return p.join(''); ");
