@@ -1,8 +1,7 @@
 YATE: a HTML template engine
-version: 1.0
+version: 1.02
 date: March 2010
 license:  New BSD License
-Copyright (c) 2010, Mu Dynamics Lab
 
 blog: http://blog.mudynamics.com/2010/03/19/yate-javascript-templating-engine-for-agile-ui-development/
 
